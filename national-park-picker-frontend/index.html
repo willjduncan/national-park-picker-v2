@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/themes/base/jquery-ui.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+   integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+   crossorigin=""/>
+   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+   integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+   crossorigin=""></script>
+   <script src='https://api.mapbox.com/mapbox-gl-js/v2.8.0/mapbox-gl.js'></script>
+  <link href='https://api.mapbox.com/mapbox-gl-js/v2.8.0/mapbox-gl.css' rel='stylesheet' />
+  <link rel="stylesheet" href="./assets/css/styles.css">
+  <title>National Park Picker</title>
+</head>
+
+<body id="overrides">
+  <header>
+    <!-- Nav bar -->
+    <div class="navbar-fixed nav-transparent">
+      <nav class="nav-transparent">
+        <div class="nav-wrapper">
+          <a href="./index.html" class="brand-logo">National Park Picker</a>
+          <ul class="right hide-on-med-and-down">
+            <li id="desc-link" class="hide"><a href="./index.html#desc-header">Description</a></li>
+            <li id="map-link" class="hide"><a href="./index.html#map">Map</a></li>
+            <li id="toDos-link" class="hide"><a href="./index.html#activities-header">Activities</a></li>
+            <li id="tours-link" class="hide"><a href="./index.html#tours-header">Tours</a></li>
+            <li id="weather-link" class="hide"><a href="./index.html#five-day-forecast">Weather</a></li>
+            <li id="main-map-link"><a href="./index.html#main-map">Map</a></li>
+            <li><a href="./index.html#resources">Resources</a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+
+    <!-- Slideshow of NP photos -->
+    <div class="slider">
+      <ul class="slides">
+        <li>
+          <img id="img0" src="https://wallpapercave.com/wp/wp4738979.jpg">
+          <div class="caption center-align">
+            <h3 id="imgName0">The National Park Service protects over 84 million acres of wild landscapes and historic sites.</h3>
+            <h5 id="descr0" ></h5>
+          </div>
+        </li>
+        <li>
+          <img id="img1" src="https://wallpapercave.com/wp/wp4738993.jpg">
+          <div class="caption center-align">
+            <h3 id="imgName1">National parks contain at least 247 species of threatened or endangered plants and
+              animals, more than 75,000 archeological sites, and nearly 27,000 historic and prehistoric structures.</h3>
+            <h5 id="descr1"></h5>
+          </div>
+        </li>
+        <li>
+          <img id="img2" src="https://wallpapercave.com/wp/wp3899205.jpg">
+          <div class="caption center-align">
+            <h3 id="imgName2">There are 879 visitor centers in the National Park System.</h3>
+            <h5 id="descr2"></h5>
+          </div>
+        </li>
+        <li>
+          <img id="img3" src="https://wallpapercave.com/wp/wp4738978.jpg">
+          <div class="caption center-align">
+            <h3 id="imgName3">There are over 18,000 miles of trails in the national parks just waiting for you to
+              explore them!</h3>
+            <h5 id="descr3"></h5>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+  </header>
+
+  <!-- Search-Results block -->
+  <div class="row">
+    <!-- Search/input form -->
+    <div class="col s12 m3">
+      <div class="row">
+        <div class="input-field col s12">
+          <i class="material-icons prefix">chevron_right</i>
+          <input name="park-name" id="park-name" type="text" autofocus="true" class="autocomplete"
+            placeholder="Yosemite" />
+          <button type="submit" class="btn-search third" id="search">Search</button>
+          <label for="autocomplete-input">Enter name of the National Park</label>
+        </div>
+        <div class="col s12">
+          <ul class="store-high hide list-header">High Priority Parks</ul>
+          <ul class="store-med hide list-header">Medium Priority Parks</ul>
+          <ul class="store-low hide list-header">Low Priority Parks</ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- alerts -->
+    <div class="col s9" id="alerts"></div>
+    <div class="col s9" id="add-park"></div>
+    <div class="choices col s9 hide">
+      <div>
+        <input type="radio" class="radio-btn" id="high-p" name="priority" value="High Priority" checked>
+        <label for="high-p">High Priority</label>
+      </div>
+      <div>
+        <input type="radio" class="radio-btn" id="med-p" name="priority" value="Medium Priority">
+        <label for="med-p">Medium Priority</label>
+      </div>
+
+      <div>
+        <input type="radio" class="radio-btn" id="low-p" name="priority" value="Low Priority">
+        <label for="low-p">Low Priority</label>
+      </div>
+      <input type="button" class="radio-brn btn-search third" id="check" name="check" value="Add Park">
+    </div>
+
+    <!-- Results shows here -->
+    <div class="col s9" id="results">
+      <div id="cardParent" class="row">
+   <div id="defaultCard" class="col s6 m5 hoverable cardContainer">
+          <div class="card">
+            <div class="card-image">
+              <img id="cardImg0" class="aspect-ratio" src="./assets/images/content-cards-placeholder.jpeg">
+              <span id="cardName0" class="card-title">Prioritize your next adventure!</span>
+              <a></a>
+            </div>
+            <div class="card-content">
+              <p id="cardDescr0">Search for National Park and add it to your favorites, and we'll feature it on the homepage!</p>
+            </div>
+          </div>
+        </div>
+
+        <div id = "defaultCard2" class="col s6 m5 cardContainer hoverable">
+          <div class="card">
+            <div class="card-image">
+              <img id="cardImg1" class="result" src="https://wallpapercave.com/wp/wp4738979.jpg">
+              <span id="cardName1" class="card-title">Plan your next step with us!</span>
+            </div>
+            <div class="card-content">
+              <p id="cardDescr1">Discover activities and tours, as well as upcoming weather at each national park. Check the links below for further resources.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div id='map' class = "col s12 m8 offset-m2" style='width: 80%; height: 400px;'></div>
+    <div id="activities" class="col s9"></div>
+    <div id="tours" class="col s9"></div>
+</div>  
+  </div>
+  <!--Weather Container-->
+  <div class="row" id="five-day-forecast">
+    
+    <div class="col s12 m6"></div>
+    <h2 class="col s9 offset-s3 valign" id="forecast"></h2>>
+    <div class="d-flex" id="fiveday-container"></div>
+  
+  </div> 
+  <!-- Map of All Natonal Parks -->
+  <div id ="main-map">
+    <h3 class="no-bb">Check out the map to discover different National Parks!</h3>
+    <div class="row" id="nat-park-map">
+      <iframe class = "col s12 m8 offset-m2" src="https://www.google.com/maps/d/u/0/embed?mid=1ufP0ba89blto7gK0pFfQg6vOCmyNeGGK&ehbc=2E312F" width="100%" height="500"></iframe>
+    </div>
+  </div>
+
+  
+  <footer class="page-footer">
+    <div class="container">
+      <div class="row">
+        <div class="col l6 s12 footer-width">
+          <h5 class="white-text">National Park Picker</h5>
+          <p class="grey-text text-lighten-4">Get outdoor and explore</p>
+        </div>
+        <div id="resources" class="col l4 offset-l2 s12 footer-width">
+          <h5 class="white-text">Need more Information?</h5>
+          <h6 class="white-text">Check out these sites!</h6>
+          <ul>
+            <li class="grey-text text-lighten-3">Get more information at the <a id="nat-park-site"
+                class="grey-text text-lighten-3 underline" href="https://www.nps.gov/index.htm" target="_blank">
+                National Park Service</a></li>
+            <li class="grey-text text-lighten-3">Reserve campsites and tours at <a id="rec-site"
+                class="grey-text text-lighten-3 underline" href="https://www.recreation.gov/" target="_blank">
+                Recreation.gov</a></li>
+            <li class="grey-text text-lighten-3">Look at maps and print pamphlets from <a id="map-site"
+                class="grey-text text-lighten-3 underline" href="http://npmaps.com/" target="_blank"> NP Maps</a></li>
+            <li class="grey-text text-lighten-3">Discover more hikes and trails at <a
+                class="grey-text text-lighten-3 underline" href="https://www.hikingproject.com/nationalparks"
+                target="_blank"> Hiking Project</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer-copyright">
+      <div class="container">
+        © 2022 Copyright Text
+      </div>
+    </div>
+  </footer>
+
+  <!-- <script type="text/javascript" src="js/materialize.min.js"></script> -->
+  <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js"></script>
+  <script src="./assets/js/homepage.js"></script>
+
+
+</body>
+
+</html>
