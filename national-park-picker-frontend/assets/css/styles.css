@@ -4,6 +4,7 @@
   --tertiary: #f2b138; /* Warm yellow for highlights and buttons */
   --light: #ffffff;
   --dark: #273238; /* Dark slate for text */
+  --title-height: 50px;
 }
 
 /* General Body Styles */
@@ -69,24 +70,57 @@ nav .brand-logo {
 }
 
 /* CARDS */
-.cardContainer {
+.card-container {
   display: flex;
   align-items: stretch;
   justify-content: space-around;
   margin-bottom: 20px;
 }
 .card {
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   width: 100%; /* Each card takes full width of the container */
   margin: 10px;
-  background-color: var(--card-bg);
+  height: 350px;
+  background-color: var(--light);
 }
-.card-title {
-  color: var(--dark);
+.card-titles {
+  position: absolute;
+  bottom: 15px;
+  left: 10px;
+  color: white; /* Ensures the text is visible against the dark background */
+  z-index: 2; /* Ensures the text is on top of the overlay */
+  font-size: clamp(0.8rem, 2.5vw, 1.6em);
+  /*padding: 5px 10px;
+  color: var(--dark); */
 }
+.card-image {
+  position: relative;
+  width: 100%;
+  overflow: hidden; /* Ensures the pseudo-element does not spill outside the container */
+}
+.card-img {
+  width: 100%; /* Sets the width to occupy the full width of the container */
+  height: 200px; /* Sets a fixed height */
+  object-fit: cover; /* Ensures the image covers the area without distorting aspect ratio */
+  display: block; /* Makes sure the image takes up the entire space of its container */
+  border-radius: 8px; /* Optional: Adds rounded corners to the image */
+}
+
+.card-image::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 15px; /* Start from the bottom of the image */
+  height: calc(var(--title-height) + 5px); /* Height of the tint overlay */
+  background: rgba(0, 0, 0, 0.6); /* Dark semi-transparent overlay */
+  z-index: 1; /* Ensures the overlay is above the image but below the text */
+}
+
 .card-content {
   color: var(--dark);
+  background-color: var(--light);
 }
 
 /* RESPONSIVE STYLES */
